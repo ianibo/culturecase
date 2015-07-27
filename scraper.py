@@ -5,7 +5,7 @@ import scraperwiki
 import time
 import requests
 import lxml.html
-
+import string
 
 # import scraperwiki
 # import lxml.html
@@ -34,19 +34,27 @@ html = scraperwiki.scrape("http://www.culturecase.org/contents/")
 root = lxml.html.fromstring(html)
 
 for el in root.cssselect("div.post-content p a"):
-    print el.text
+
+    title = el.text
     content_url = el.attrib['href']
-    print "Scrape..."+content_url
+
     contentpage = scraperwiki.scrape(content_url);
     content_root = lxml.html.fromstring(contentpage);
+
+    post_metadata = {'uri':content_url,'linktitle':title,'cesource':'http://www.culturecase.org'}
+
     for metadata_el in content_root.cssselect("table.research-meta tr"):
-      print "element"
-      print metadata_el.cssselect("th")[0].text
-      print metadata_el.cssselect("td")[0].text
+      propname=metadata_el.cssselect("th")[0].text
+      propvalue=metadata_el.cssselect("td")[0].text
+      if propvalue is not None:
+        post_metadata[propname.translate(string.maketrans("",""), string.punctuation)] = propvalue
+
+    print post_metadata
+
+    scraperwiki.sqlite.save(unique_keys=['uri'], data=post_metadata)
 
 
 # Write out to the sqlite database using scraperwiki library
-# scraperwiki.sqlite.save(unique_keys=['name'], data={"name": "susan", "occupation": "software developer"})
 
 # for i in range(1, 6):
 #     print "%i..." % i
