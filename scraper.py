@@ -49,6 +49,9 @@ for el in root.cssselect("div.post-content p a"):
       if propvalue is not None:
         post_metadata[propname.translate(string.maketrans("",""), string.punctuation)] = propvalue
 
+    summary = content_root.cssselect("div.post-content p")[1]
+    post_metadata['description'] = summary.text
+
     print post_metadata
 
     scraperwiki.sqlite.save(unique_keys=['uri'], data=post_metadata)
