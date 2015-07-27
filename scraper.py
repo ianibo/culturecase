@@ -35,7 +35,15 @@ root = lxml.html.fromstring(html)
 
 for el in root.cssselect("div.post-content p a"):
     print el.text
-    print el.attrib['href']
+    content_url = el.attrib['href']
+    print "Scrape..."+content_url
+    contentpage = scraperwiki.scrape(content_url);
+    content_root = lxml.html.fromstring(contentpage);
+    for metadata_el in content_root.cssselect("table.research-meta tr"):
+      print "element"
+      print metadata_el.cssselect("th")[0].text
+      print metadata_el.cssselect("td")[0].text
+
 
 # Write out to the sqlite database using scraperwiki library
 # scraperwiki.sqlite.save(unique_keys=['name'], data={"name": "susan", "occupation": "software developer"})
