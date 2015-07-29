@@ -41,7 +41,7 @@ for el in root.cssselect("div.post-content p a"):
     contentpage = scraperwiki.scrape(content_url);
     content_root = lxml.html.fromstring(contentpage);
 
-    post_metadata = {'uri':content_url,'linktitle':title,'cesource':'http://www.culturecase.org', ceDocType:'PeerReviewedResearch'}
+    post_metadata = {'uri':content_url,'linktitle':title,'cesource':'http://www.culturecase.org', 'ceDocType':'PeerReviewedResearch'}
 
     for metadata_el in content_root.cssselect("table.research-meta tr"):
       propname=metadata_el.cssselect("th")[0].text
@@ -52,6 +52,13 @@ for el in root.cssselect("div.post-content p a"):
         propvalue=metadata_el.cssselect("td a")[0].text
         if propvalue is not None:
           post_metadata[propname.translate(string.maketrans("",""), string.punctuation)] = propvalue
+
+
+    keywords = []
+    for keyword_href in content_root.cssselect("div.keywords a"):
+      keywords.append('"'+keyword_href.text+'"')
+
+    post_metadata['keywords'] = ', '.join(keywords)
 
     summary = content_root.cssselect("div.post-content p")[1]
     post_metadata['description'] = summary.text
