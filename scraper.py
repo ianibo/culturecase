@@ -48,6 +48,10 @@ for el in root.cssselect("div.post-content p a"):
       propvalue=metadata_el.cssselect("td")[0].text
       if propvalue is not None:
         post_metadata[propname.translate(string.maketrans("",""), string.punctuation)] = propvalue
+      else:
+        propvalue=metadata_el.cssselect("td a")[0].text
+        if propvalue is not None:
+          post_metadata[propname.translate(string.maketrans("",""), string.punctuation)] = propvalue
 
     summary = content_root.cssselect("div.post-content p")[1]
     post_metadata['description'] = summary.text
